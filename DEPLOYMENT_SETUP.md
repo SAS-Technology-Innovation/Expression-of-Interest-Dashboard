@@ -4,25 +4,66 @@
 
 To use these workflows, you need to set up the following secrets in your GitHub repository:
 
-### 1. CLASP_CREDENTIALS
+### 1. GOOGLE_SERVICE_ACCOUNT_KEY (Recommended)
 
-This should contain your Google Apps Script authentication credentials. You have two options:
+**This is the new recommended approach for CI/CD:**
 
-#### Option A: Service Account (Recommended for CI/CD)
-1. Create a Google Cloud Platform project
-2. Enable the Google Apps Script API
-3. Create a service account and download the JSON key file
-4. Share your Apps Script project with the service account email
-5. Copy the entire JSON content and add it as the `CLASP_CREDENTIALS` secret
+#### Step-by-step Setup:
 
-#### Option B: OAuth2 Credentials
-1. Run `clasp login` locally
-2. Copy the contents of `~/.clasprc.json`
-3. Add this as the `CLASP_CREDENTIALS` secret
+1. **Create a Google Cloud Platform project** (or use existing one)
+   - Go to [Google Cloud Console](https://console.cloud.google.com/)
+   - Create a new project or select existing project
+
+2. **Enable the Google Apps Script API**
+   - Go to APIs & Services > Library
+   - Search for "Google Apps Script API"
+   - Click and Enable it
+
+3. **Create a Service Account**
+   - Go to IAM & Admin > Service Accounts
+   - Click "Create Service Account"
+   - Name: `clasp-deployment` (or any name you prefer)
+   - Description: `Service account for CLASP deployment via GitHub Actions`
+   - Click "Create and Continue"
+   - Skip role assignment (we'll handle permissions differently)
+   - Click "Done"
+
+4. **Create and Download Service Account Key**
+   - Click on the created service account
+   - Go to "Keys" tab
+   - Click "Add Key" > "Create new key"
+   - Choose "JSON" format
+   - Download the JSON file
+
+5. **Share your Apps Script project with the Service Account**
+   - Open your Google Apps Script project
+   - Click "Share" button (top right)
+   - Add the service account email (found in the JSON file) as an Editor
+   - The email looks like: `clasp-deployment@your-project.iam.gserviceaccount.com`
+
+6. **Add to GitHub Secrets**
+   - Go to your repository > Settings > Secrets and variables > Actions
+   - Click "New repository secret"
+   - Name: `GOOGLE_SERVICE_ACCOUNT_KEY`
+   - Value: Copy and paste the **entire contents** of the downloaded JSON file
 
 ### 2. GITHUB_TOKEN
 
 This is automatically provided by GitHub Actions, no setup required.
+
+## Alternative: OAuth2 User Credentials (Not Recommended for CI/CD)
+
+If you prefer to use your personal OAuth2 credentials:
+
+#### Setup:
+1. Run `clasp login` locally
+2. Copy the contents of `~/.clasprc.json`
+3. Add this as `CLASP_CREDENTIALS` secret in GitHub
+
+**Note: This approach has limitations:**
+- Access tokens expire frequently
+- Less secure for automation
+- May require frequent re-authentication
 
 ## Setting up Secrets
 

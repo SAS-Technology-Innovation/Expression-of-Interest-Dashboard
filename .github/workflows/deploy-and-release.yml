@@ -24,20 +24,17 @@ jobs:
       run: |
         npm install -g @google/clasp
       
-    - name: Create CLASP credentials file
+    - name: Setup CLASP authentication
       run: |
-        echo '${{ secrets.CLASP_CREDENTIALS }}' > ~/.clasprc.json
-        ls -la ~/.clasprc.json
-        echo "Working directory contents:"
-        ls -la
-        echo "Looking for .clasp.json:"
-        cat .clasp.json
-      
-    - name: Verify CLASP authentication
-      run: |
-        echo "Testing CLASP authentication..."
+        # Create service account credentials file
+        echo '${{ secrets.GOOGLE_SERVICE_ACCOUNT_KEY }}' > /tmp/service-account-key.json
+        
+        # Login using service account
+        clasp login --creds /tmp/service-account-key.json
+        
+        # Verify authentication worked
+        echo "CLASP authentication successful"
         clasp --version
-        clasp status
       
     - name: Push to Google Apps Script
       run: clasp push
