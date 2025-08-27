@@ -44,9 +44,17 @@ jobs:
     - name: Create CLASP credentials file
       run: |
         echo '${{ secrets.CLASP_CREDENTIALS }}' > ~/.clasprc.json
+        ls -la ~/.clasprc.json
+        echo "Working directory contents:"
+        ls -la
+        echo "Looking for .clasp.json:"
+        cat .clasp.json
       
     - name: Verify CLASP authentication
-      run: clasp status
+      run: |
+        echo "Testing CLASP authentication..."
+        clasp --version
+        clasp status
       
     - name: Push to Google Apps Script
       run: clasp push
