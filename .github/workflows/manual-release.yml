@@ -43,14 +43,15 @@ jobs:
       
     - name: Setup CLASP authentication
       run: |
-        # Create service account credentials file
-        echo '${{ secrets.GOOGLE_SERVICE_ACCOUNT_KEY }}' > /tmp/service-account-key.json
+        # Create OAuth2 credentials file in correct format
+        mkdir -p ~/.config/@google
+        echo '${{ secrets.CLASP_CREDENTIALS }}' > ~/.clasprc.json
         
-        # Login using service account
-        clasp login --creds /tmp/service-account-key.json
+        # Verify file was created
+        echo "Credentials file created"
+        ls -la ~/.clasprc.json
         
-        # Verify authentication worked
-        echo "CLASP authentication successful"
+        # Test CLASP version
         clasp --version
       
     - name: Push to Google Apps Script
