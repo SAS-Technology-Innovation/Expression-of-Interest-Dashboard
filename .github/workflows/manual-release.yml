@@ -46,7 +46,7 @@ jobs:
         echo '${{ secrets.CLASP_CREDENTIALS }}' > ~/.clasprc.json
       
     - name: Verify CLASP authentication
-      run: clasp auth --status
+      run: clasp status
       
     - name: Push to Google Apps Script
       run: clasp push
