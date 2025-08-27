@@ -19,12 +19,10 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: '18'
-        cache: 'npm'
     
-    - name: Install dependencies
+    - name: Install CLASP
       run: |
         npm install -g @google/clasp
-        npm install --save-dev
       
     - name: Create CLASP credentials file
       run: |
