@@ -1,0 +1,14 @@
+# Firebase
+.firebase/
+.firebaserc
+firebase-debug.log
+
+# Dependencies
+node_modules/
+
+# Environment
+.env
+.env.local
+
+# Logs
+*.log

@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAS Expression of Interest Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #192f59 0%, #29529c 100%);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+        }
+        
+        .container {
+            max-width: 500px;
+            text-align: center;
+            padding: 40px 30px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        
+        .sas-logo {
+            width: 80px;
+            height: 80px;
+            background: white;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: #192f59;
+        }
+        
+        h1 {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: white;
+        }
+        
+        .subtitle {
+            font-size: 16px;
+            opacity: 0.9;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+        
+        .spinner {
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top: 3px solid #20c997;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .status-text {
+            font-size: 16px;
+            margin: 15px 0;
+            opacity: 0.9;
+        }
+        
+        .manual-link {
+            margin-top: 20px;
+            padding: 15px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .manual-link a {
+            color: #20c997;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+        
+        .manual-link a:hover {
+            color: #17a2b8;
+            text-decoration: underline;
+        }
+        
+        .tech-credit {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 12px;
+            opacity: 0.6;
+            text-align: center;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                margin: 20px;
+                padding: 30px 20px;
+            }
+            
+            h1 {
+                font-size: 24px;
+            }
+            
+            .subtitle {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sas-logo">SAS</div>
+        <h1>Expression of Interest</h1>
+        <p class="subtitle">
+            2026-27 Internal Transfer (Faculty Roles)<br>
+            Singapore American School
+        </p>
+        
+        <div class="spinner"></div>
+        <p class="status-text">Loading dashboard...</p>
+        
+        <div class="manual-link">
+            <small>
+                If you're not redirected automatically, 
+                <a href="#" id="manual-link">click here to continue</a>
+            </small>
+        </div>
+    </div>
+    
+    <div class="tech-credit">
+        Developed by the Technology & Innovation Team
+    </div>
+
+    <script>
+        // Replace with your latest Apps Script deployment URL
+        // Current deployment: @12 - Updated footer with Amelia Seow contact information
+        const appScriptUrl = "https://script.google.com/macros/s/AKfycbz0_27f8wp0mIcnhSypSpp90PPA7Z9uqyqjegwP-OEBSCY57wt1761vgw2g_niLTD6mHA/exec";
+        
+        // Set manual link
+        document.getElementById('manual-link').href = appScriptUrl;
+        
+        // Add some visual feedback
+        let dots = 0;
+        const statusText = document.querySelector('.status-text');
+        const originalText = 'Loading dashboard';
+        
+        const animateLoading = setInterval(() => {
+            dots = (dots + 1) % 4;
+            statusText.textContent = originalText + '.'.repeat(dots);
+        }, 500);
+        
+        // Redirect after 2.5 seconds (slightly longer to show the nice loading screen)
+        setTimeout(() => {
+            clearInterval(animateLoading);
+            statusText.textContent = 'Redirecting to dashboard...';
+            window.location.href = appScriptUrl;
+        }, 2500);
+        
+        // Analytics (optional - uncomment if you want to track usage)
+        // You can add Google Analytics or Firebase Analytics here
+        /*
+        console.log('Dashboard redirect initiated at:', new Date().toISOString());
+        // Example: gtag('event', 'dashboard_access', { 'event_category': 'engagement' });
+        */
+    </script>
+</body>
+</html>

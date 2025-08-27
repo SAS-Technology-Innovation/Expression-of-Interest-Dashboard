@@ -1,0 +1,48 @@
+{
+  "hosting": {
+    "public": "public",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "redirects": [
+      {
+        "source": "/app",
+        "destination": "https://script.google.com/macros/s/AKfycbz0_27f8wp0mIcnhSypSpp90PPA7Z9uqyqjegwP-OEBSCY57wt1761vgw2g_niLTD6mHA/exec",
+        "type": 302
+      },
+      {
+        "source": "/dashboard",
+        "destination": "https://script.google.com/macros/s/AKfycbz0_27f8wp0mIcnhSypSpp90PPA7Z9uqyqjegwP-OEBSCY57wt1761vgw2g_niLTD6mHA/exec",
+        "type": 302
+      },
+      {
+        "source": "/eoi",
+        "destination": "https://script.google.com/macros/s/AKfycbz0_27f8wp0mIcnhSypSpp90PPA7Z9uqyqjegwP-OEBSCY57wt1761vgw2g_niLTD6mHA/exec",
+        "type": 302
+      }
+    ],
+    "headers": [
+      {
+        "source": "**",
+        "headers": [
+          {
+            "key": "X-Frame-Options",
+            "value": "SAMEORIGIN"
+          },
+          {
+            "key": "X-Content-Type-Options",
+            "value": "nosniff"
+          }
+        ]
+      }
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}
