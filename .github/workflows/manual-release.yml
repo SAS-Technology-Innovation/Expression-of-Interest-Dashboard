@@ -1,0 +1,125 @@
+name: Manual Release and Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version (e.g., v1.2.3)'
+        required: true
+        type: string
+      release_type:
+        description: 'Type of release'
+        required: true
+        default: 'minor'
+        type: choice
+        options:
+        - patch
+        - minor  
+        - major
+      prerelease:
+        description: 'Mark as pre-release'
+        required: false
+        default: false
+        type: boolean
+
+jobs:
+  manual-release:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: |
+        npm install -g @google/clasp
+        npm install --save-dev
+      
+    - name: Create CLASP credentials file
+      run: |
+        echo '${{ secrets.CLASP_CREDENTIALS }}' > ~/.clasprc.json
+      
+    - name: Login to CLASP
+      run: clasp login --creds ~/.clasprc.json
+      
+    - name: Push to Google Apps Script
+      run: clasp push
+      
+    - name: Deploy new version
+      run: |
+        VERSION_ID=$(clasp deploy --description "Manual release ${{ github.event.inputs.version }} - ${{ github.event.inputs.release_type }}" | grep -o 'Created version [0-9]*' | grep -o '[0-9]*')
+        echo "DEPLOYMENT_VERSION=$VERSION_ID" >> $GITHUB_ENV
+      
+    - name: Create Git tag
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git tag ${{ github.event.inputs.version }}
+        git push origin ${{ github.event.inputs.version }}
+      
+    - name: Generate release notes
+      id: release_notes
+      run: |
+        # Get commits since last tag
+        LAST_TAG=$(git describe --tags --abbrev=0 HEAD~1 2>/dev/null || echo "")
+        if [ -z "$LAST_TAG" ]; then
+          COMMITS=$(git log --oneline --pretty=format:"- %s (%h)" -10)
+        else
+          COMMITS=$(git log --oneline --pretty=format:"- %s (%h)" $LAST_TAG..HEAD)
+        fi
+        
+        # Release type emoji
+        case "${{ github.event.inputs.release_type }}" in
+          "major") TYPE_EMOJI="🚀" ;;
+          "minor") TYPE_EMOJI="✨" ;;
+          "patch") TYPE_EMOJI="🐛" ;;
+          *) TYPE_EMOJI="📦" ;;
+        esac
+        
+        # Create release notes
+        cat > release_notes.md << EOF
+        ## $TYPE_EMOJI Manual Release - ${{ github.event.inputs.release_type }}
+        
+        **Deployment Details:**
+        - **Apps Script Version:** ${DEPLOYMENT_VERSION}
+        - **Release Type:** ${{ github.event.inputs.release_type }}
+        - **Commit:** ${{ github.sha }}
+        - **Branch:** ${{ github.ref_name }}
+        - **Released by:** ${{ github.actor }}
+        - **Released at:** $(date -u '+%Y-%m-%d %H:%M:%S UTC')
+        
+        ## 📝 Changes in this release:
+        $COMMITS
+        
+        ---
+        *This release was manually created by ${{ github.actor }} via GitHub Actions*
+        EOF
+        
+        echo "RELEASE_NOTES<<EOF" >> $GITHUB_OUTPUT
+        cat release_notes.md >> $GITHUB_OUTPUT
+        echo "EOF" >> $GITHUB_OUTPUT
+      
+    - name: Create GitHub Release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.event.inputs.version }}
+        release_name: "${{ github.event.inputs.release_type }} Release ${{ github.event.inputs.version }}"
+        body: ${{ steps.release_notes.outputs.RELEASE_NOTES }}
+        draft: false
+        prerelease: ${{ github.event.inputs.prerelease }}
+        
+    - name: Notify on success
+      run: |
+        echo "✅ Successfully created manual release ${{ github.event.inputs.version }}"
+        echo "🔗 Apps Script project updated with version ${DEPLOYMENT_VERSION}"
+        echo "📦 GitHub release created"

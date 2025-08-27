@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <base target="_top">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Expression of Interest: 2026-27 Internal Transfer (Faculty Roles)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8f9fc;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            position: relative;
+            height: 300px;
+            background: linear-gradient(135deg, rgba(25, 47, 89, 0.85) 0%, rgba(41, 82, 156, 0.85) 100%), 
+                        url('https://resources.finalsite.net/images/f_auto,q_auto/v1750142054/sas/rwcc7srqzco0i28f9lwo/2018HighSchoolSpiritSCOTTAWOODWARD_DSC0313final_website.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-align: center;
+            overflow: hidden;
+        }
+        
+        .header-content {
+            z-index: 2;
+            padding: 20px;
+        }
+        
+        .header h1 {
+            font-family: 'Bebas Neue', cursive;
+            font-size: 3.5rem;
+            font-weight: normal;
+            margin-bottom: 12px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            letter-spacing: 2px;
+        }
+        
+        .header p {
+            font-size: 1.1rem;
+            font-weight: 300;
+            opacity: 0.95;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .tabs-container {
+            background: #192f59;
+            border-bottom: 3px solid #295c9c;
+        }
+        
+        .tabs {
+            display: flex;
+            max-width: 1400px;
+            margin: 0 auto;
+            overflow-x: auto;
+            scroll-behavior: smooth;
+        }
+        
+        .tab {
+            flex: 1;
+            min-width: 200px;
+            padding: 18px 24px;
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.8);
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+            position: relative;
+            text-align: center;
+        }
+        
+        .tab:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+        
+        .tab.active {
+            color: white;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .tab.active.elementary {
+            border-bottom-color: #28a745;
+            box-shadow: inset 0 -3px 0 #28a745;
+        }
+        
+        .tab.active.middle {
+            border-bottom-color: #dc3545;
+            box-shadow: inset 0 -3px 0 #dc3545;
+        }
+        
+        .tab.active.high {
+            border-bottom-color: #007bff;
+            box-shadow: inset 0 -3px 0 #007bff;
+        }
+        
+        .tab.active.whole {
+            border-bottom-color: #6f42c1;
+            box-shadow: inset 0 -3px 0 #6f42c1;
+        }
+        
+        .job-count {
+            background: #f8f9fc;
+            padding: 16px 24px;
+            text-align: center;
+            font-weight: 500;
+            color: #192f59;
+            border-bottom: 1px solid #e9ecef;
+            display: none; /* Hidden - not needed */
+        }
+        
+        .content {
+            padding: 32px 24px;
+            min-height: 500px;
+        }
+        
+        .job-grid {
+            display: grid;
+            gap: 24px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .job-card {
+            border: 1px solid #e9ecef;
+            border-radius: 12px;
+            padding: 24px;
+            transition: all 0.3s ease;
+            background: white;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .job-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: #e9ecef;
+            transition: all 0.3s ease;
+        }
+        
+        .job-card.elementary::before {
+            background: linear-gradient(135deg, #28a745, #20c997);
+        }
+        
+        .job-card.middle::before {
+            background: linear-gradient(135deg, #dc3545, #fd7e14);
+        }
+        
+        .job-card.high::before {
+            background: linear-gradient(135deg, #007bff, #6610f2);
+        }
+        
+        .job-card.whole::before {
+            background: linear-gradient(135deg, #6f42c1, #e83e8c);
+        }
+        
+        .job-card:hover {
+            border-color: #192f59;
+            box-shadow: 0 8px 25px rgba(25, 47, 89, 0.15);
+            transform: translateY(-2px);
+        }
+        
+        .job-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+            gap: 20px;
+        }
+        
+        .job-title {
+            font-family: 'Bebas Neue', cursive;
+            font-size: 1.5rem;
+            font-weight: normal;
+            color: #192f59;
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+            line-height: 1.2;
+        }
+        
+        .job-division {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+        
+        .job-division.elementary {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+        }
+        
+        .job-division.middle {
+            background: linear-gradient(135deg, #dc3545, #fd7e14);
+            color: white;
+        }
+        
+        .job-division.high {
+            background: linear-gradient(135deg, #007bff, #6610f2);
+            color: white;
+        }
+        
+        .job-division.whole {
+            background: linear-gradient(135deg, #6f42c1, #e83e8c);
+            color: white;
+        }
+        
+        .job-summary {
+            color: #6c757d;
+            margin-bottom: 20px;
+            line-height: 1.6;
+            font-weight: 400;
+        }
+        
+        .job-actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 12px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #192f59, #295c9c);
+            color: white;
+            box-shadow: 0 4px 12px rgba(25, 47, 89, 0.3);
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #0f1f3d, #1e4578);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(25, 47, 89, 0.4);
+        }
+        
+        .btn-secondary {
+            background: #f8f9fc;
+            color: #192f59;
+            border: 2px solid #e9ecef;
+        }
+        
+        .btn-secondary:hover {
+            background: #e9ecef;
+            border-color: #192f59;
+            transform: translateY(-1px);
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6c757d;
+        }
+        
+        .loading h3 {
+            font-family: 'Bebas Neue', cursive;
+            font-size: 1.8rem;
+            color: #192f59;
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6c757d;
+        }
+        
+        .empty-state h3 {
+            font-family: 'Bebas Neue', cursive;
+            font-size: 1.8rem;
+            margin-bottom: 12px;
+            color: #192f59;
+            letter-spacing: 1px;
+        }
+        
+        .empty-state p {
+            font-size: 16px;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        
+        .footer {
+            background: linear-gradient(135deg, #192f59, #295c9c);
+            color: white;
+            padding: 24px 0;
+            margin-top: 40px;
+        }
+        
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            text-align: center;
+        }
+        
+        .footer-section {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .footer-credit {
+            font-family: 'Bebas Neue', cursive;
+            font-size: 1.2rem;
+            letter-spacing: 1px;
+            margin: 0;
+            color: white;
+        }
+        
+        .footer-contact {
+            font-size: 14px;
+            margin: 0;
+            opacity: 0.9;
+            font-weight: 400;
+        }
+        
+        .footer-tech {
+            font-size: 13px;
+            margin: 0;
+            opacity: 0.8;
+            font-weight: 300;
+        }
+        
+        .footer-tech a {
+            color: #20c997;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+        
+        .footer-tech a:hover {
+            color: #28a745;
+            text-decoration: underline;
+        }
+        
+        .footer-divider {
+            height: 1px;
+            background: rgba(255, 255, 255, 0.2);
+            margin: 8px auto;
+            width: 100%;
+            max-width: 400px;
+        }
+        
+        @media (max-width: 768px) {
+            .header {
+                height: 250px;
+                background-attachment: scroll;
+            }
+            
+            .header h1 {
+                font-size: 2.5rem;
+            }
+            
+            .header p {
+                font-size: 1rem;
+            }
+            
+            .tabs {
+                flex-direction: column;
+            }
+            
+            .tab {
+                min-width: auto;
+                padding: 15px 20px;
+            }
+            
+            .content {
+                padding: 24px 16px;
+            }
+            
+            .job-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+            
+            .job-actions {
+                flex-direction: column;
+            }
+            
+            .btn {
+                justify-content: center;
+            }
+            
+            .footer-content {
+                padding: 0 16px;
+            }
+            
+            .footer-credit {
+                font-size: 1.1rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .job-card {
+                padding: 20px;
+            }
+            
+            .job-title {
+                font-size: 1.3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-content">
+                <h1>Expression of Interest</h1>
+                <h2>2026-27 Internal Transfer (Faculty Roles)</h2>
+            </div>
+        </div>
+        
+        <div class="tabs-container">
+            <div class="tabs">
+                <button class="tab active" data-division="" id="allTab">
+                    All Divisions
+                </button>
+                <button class="tab elementary" data-division="Elementary School" id="elementaryTab">
+                    Elementary School
+                </button>
+                <button class="tab middle" data-division="Middle School" id="middleTab">
+                    Middle School
+                </button>
+                <button class="tab high" data-division="High School" id="highTab">
+                    High School
+                </button>
+                <!-- Whole School tab is temporarily disabled but code preserved for future use -->
+                <button class="tab whole" data-division="Whole School" id="wholeTab" style="display: none;">
+                    Whole School
+                </button>
+            </div>
+        </div>
+        
+        <div class="content">
+            <div id="jobContainer">
+                <div class="loading">
+                    <h3>Loading Faculty Roles</h3>
+                    <p>Please wait while we fetch the latest opportunities...</p>
+                </div>
+            </div>
+        </div>
+        
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <p class="footer-credit">
+                        <strong>Developed by the Technology & Innovation Team</strong>
+                    </p>
+                </div>
+                <div class="footer-divider"></div>
+                <div class="footer-section">
+                    <p class="footer-contact">
+                        Contact <strong>HR</strong> if any faculty role details are incorrect or you have questions about positions
+                    </p>
+                    <p class="footer-tech">
+                        Technical issues? Email <a href="mailto:edtech@sas.edu.sg">edtech@sas.edu.sg</a>
+                    </p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        let allJobs = [];
+        let filteredJobs = [];
+        let currentDivision = '';
+        
+        // Load data when page loads
+        window.onload = function() {
+            loadJobOpenings();
+            setupTabListeners();
+        };
+        
+        function setupTabListeners() {
+            const tabs = document.querySelectorAll('.tab:not([style*="display: none"])'); // Skip hidden tabs
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const division = this.getAttribute('data-division');
+                    selectTab(division);
+                    filterJobs(division);
+                });
+            });
+        }
+        
+        function selectTab(division) {
+            currentDivision = division;
+            
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Add active class to selected tab
+            if (division === '') {
+                document.getElementById('allTab').classList.add('active');
+            } else if (division === 'Elementary School') {
+                document.getElementById('elementaryTab').classList.add('active');
+            } else if (division === 'Middle School') {
+                document.getElementById('middleTab').classList.add('active');
+            } else if (division === 'High School') {
+                document.getElementById('highTab').classList.add('active');
+            } else if (division === 'Whole School') {
+                // Only activate if tab is visible
+                const wholeTab = document.getElementById('wholeTab');
+                if (wholeTab && !wholeTab.style.display.includes('none')) {
+                    wholeTab.classList.add('active');
+                }
+            }
+        }
+        
+        function loadJobOpenings() {
+            google.script.run
+                .withSuccessHandler(displayRoles)
+                .withFailureHandler(showError)
+                .getJobOpeningsWithExternalForm();
+        }
+        
+        function displayRoles(roles) {
+            allJobs = roles;
+            filteredJobs = roles;
+            renderRoles();
+        }
+        
+        function filterJobs(selectedDivision = currentDivision) {
+            if (selectedDivision === '') {
+                filteredJobs = allJobs;
+            } else {
+                filteredJobs = allJobs.filter(role => role.division === selectedDivision);
+            }
+            
+            renderRoles();
+        }
+        
+        function getDivisionClass(division) {
+            const divisionLower = division.toLowerCase();
+            if (divisionLower.includes('elementary')) return 'elementary';
+            if (divisionLower.includes('middle')) return 'middle';
+            if (divisionLower.includes('high')) return 'high';
+            if (divisionLower.includes('whole')) return 'whole';
+            return 'elementary'; // default
+        }
+        
+        function renderRoles() {
+            const container = document.getElementById('jobContainer');
+            
+            if (filteredJobs.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <h3>No Faculty Roles Found</h3>
+                        <p>Try selecting a different division or check back later for new opportunities.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            const rolesHtml = filteredJobs.map(role => {
+                const divisionClass = getDivisionClass(role.division);
+                return `
+                    <div class="job-card ${divisionClass}">
+                        <div class="job-header">
+                            <div>
+                                <div class="job-title">${escapeHtml(role.roleTitle)}</div>
+                                <span class="job-division ${divisionClass}">${escapeHtml(role.division)}</span>
+                            </div>
+                        </div>
+                        
+                        ${role.summaryRole ? `<div class="job-summary">${escapeHtml(role.summaryRole)}</div>` : ''}
+                        
+                        <div class="job-actions">
+                            <a href="${role.interestFormUrl || '#'}" class="btn btn-primary" target="_blank" 
+                               onclick="return role.interestFormUrl !== undefined && role.interestFormUrl !== ''">
+                                📝 Submit Interest
+                            </a>
+                            ${role.descriptionLink && role.descriptionLink.trim() !== '' ? `
+                                <a href="${role.descriptionLink}" class="btn btn-secondary" target="_blank">
+                                    📋 View Job Description
+                                </a>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            container.innerHTML = `<div class="job-grid">${rolesHtml}</div>`;
+        }
+        
+        function showError(error) {
+            document.getElementById('jobContainer').innerHTML = `
+                <div class="empty-state">
+                    <h3>Unable to Load Faculty Roles</h3>
+                    <p>Please try refreshing the page or contact IT support if the problem persists.</p>
+                </div>
+            `;
+        }
+        
+        // Remove the updateRoleCount function as it's no longer needed
+        
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    </script>
+</body>
+</html>

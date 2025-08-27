@@ -1,0 +1,116 @@
+name: Deploy to Google Apps Script and Create Release
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:  # Allows manual triggering
+
+jobs:
+  deploy-and-release:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Fetch full history for proper versioning
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: |
+        npm install -g @google/clasp
+        npm install --save-dev
+      
+    - name: Create CLASP credentials file
+      run: |
+        echo '${{ secrets.CLASP_CREDENTIALS }}' > ~/.clasprc.json
+      
+    - name: Login to CLASP
+      run: clasp login --creds ~/.clasprc.json
+      
+    - name: Push to Google Apps Script
+      run: clasp push
+      
+    - name: Deploy new version
+      run: |
+        VERSION_ID=$(clasp deploy --description "Automated deployment from commit ${{ github.sha }}" | grep -o 'Created version [0-9]*' | grep -o '[0-9]*')
+        echo "DEPLOYMENT_VERSION=$VERSION_ID" >> $GITHUB_ENV
+      
+    - name: Generate version tag
+      id: version
+      run: |
+        # Generate semantic version based on date and commit
+        VERSION="v$(date +'%Y.%m.%d')-$(echo ${{ github.sha }} | cut -c1-7)"
+        echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+        echo "Generated version: $VERSION"
+      
+    - name: Create Git tag
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git tag ${{ steps.version.outputs.VERSION }}
+        git push origin ${{ steps.version.outputs.VERSION }}
+      
+    - name: Generate release notes
+      id: release_notes
+      run: |
+        # Get commits since last tag
+        LAST_TAG=$(git describe --tags --abbrev=0 HEAD~1 2>/dev/null || echo "")
+        if [ -z "$LAST_TAG" ]; then
+          COMMITS=$(git log --oneline --pretty=format:"- %s (%h)" -10)
+        else
+          COMMITS=$(git log --oneline --pretty=format:"- %s (%h)" $LAST_TAG..HEAD)
+        fi
+        
+        # Create release notes
+        cat > release_notes.md << EOF
+        ## 🚀 Automated Release
+        
+        **Deployment Details:**
+        - **Apps Script Version:** ${DEPLOYMENT_VERSION}
+        - **Commit:** ${{ github.sha }}
+        - **Branch:** ${{ github.ref_name }}
+        - **Deployed at:** $(date -u '+%Y-%m-%d %H:%M:%S UTC')
+        
+        ## 📝 Changes in this release:
+        $COMMITS
+        
+        ---
+        *This release was automatically created by GitHub Actions*
+        EOF
+        
+        echo "RELEASE_NOTES<<EOF" >> $GITHUB_OUTPUT
+        cat release_notes.md >> $GITHUB_OUTPUT
+        echo "EOF" >> $GITHUB_OUTPUT
+      
+    - name: Create GitHub Release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ steps.version.outputs.VERSION }}
+        release_name: "Release ${{ steps.version.outputs.VERSION }}"
+        body: ${{ steps.release_notes.outputs.RELEASE_NOTES }}
+        draft: false
+        prerelease: false
+        
+    - name: Upload Apps Script files to release
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./appsscript.json
+        asset_name: appsscript.json
+        asset_content_type: application/json
+
+    - name: Notify on success
+      run: |
+        echo "✅ Successfully deployed and released version ${{ steps.version.outputs.VERSION }}"
+        echo "🔗 Apps Script project updated"
+        echo "📦 GitHub release created"
